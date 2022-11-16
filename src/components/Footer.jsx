@@ -1,9 +1,11 @@
 import { Facebook, Instagram, LinkedIn, MailOutline, Phone, Room, Twitter } from '@mui/icons-material'
 import React from 'react'
 import styled from 'styled-components'
+import { mobile } from '../Responsive'
 
 const Container = styled.div`
     display: flex;
+    ${mobile({flexDirection:"column"})}
 `
 
 const Left = styled.div`
