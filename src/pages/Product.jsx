@@ -6,6 +6,10 @@ import NewsLetter from '../components/Newsletter'
 import Footer from '../components/Footer'
 import { Add, Remove } from '@mui/icons-material'
 import { mobile } from '../Responsive'
+import { useLocation } from 'react-router-dom'
+import { useQuery } from 'react-query'
+import { getSingleProduct } from '../ApiCalls'
+import { useState } from 'react'
 
 const Container = styled.div``
 
@@ -102,6 +106,40 @@ const Button = styled.button`
 `
 
 const Product = () => {
+  const location = useLocation()
+  const id = location.pathname.split("/")[2]
+  const [quantity, setQuantity] = useState(1)
+  const [color, setColor] = useState("")
+  const [size, setSize] = useState("")
+
+  const handleQunatity = (type) => {
+    if(type === 'dec') {
+      quantity > 1 && setQuantity(quantity - 1)
+    }
+    else{
+      quantity < 10 && setQuantity(quantity + 1)
+    }
+  }
+
+  const handleCartSubmit = () => {
+    //update cart
+  }
+
+  const {data, isFetching, isLoading, isError, error} = useQuery("single-product", ()=>getSingleProduct(id), {
+    refetchOnWindowFocus: false,
+    select: (data) => {
+      return data.data
+    }
+  })
+
+  if(isLoading, isFetching) {
+    return <h2>Loading...</h2>
+  }
+  if(isError) {
+    console.log(error)
+    return <div></div>
+  }
+
   return (
     <Container>
       <Announcement />
@@ -109,30 +147,28 @@ const Product = () => {
 
       <Wrapper>
         <ImageContainer>
-          <Image src="https://i.pinimg.com/originals/5a/56/24/5a56249190692312fc7deb162d67d023.jpg"/>
+          <Image src={data.img}/>
         </ImageContainer>
 
         <InfoContainer>
-          <Title>Denim Jumpsuit</Title>
-          <Desc>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Possimus dolorem delectus, deserunt, numquam sapiente consequatur magnam corrupti repellendus ipsam sunt laudantium impedit illum voluptates cumque culpa minus voluptatem? Iste, sequi.</Desc>
-          <Price>$ 20</Price>
+          <Title>{data.title}</Title>
+          <Desc>{data.desc}</Desc>
+          <Price>$ {data.price}</Price>
 
           <FilterContainer>
             <Filter>
               <FilterTitle>Color</FilterTitle>
-              <FilterColor color="black"/>
-              <FilterColor color="gray"/>
-              <FilterColor color="skyblue"/>
+              {data.color?.map(item => (
+                <FilterColor color={item} key={item} onClick={()=>setColor(item)}/>
+              ))}
             </Filter>
 
             <Filter>
               <FilterTitle>Size</FilterTitle>
-              <FilterSize>
-                <FilterSizeOption>XS</FilterSizeOption>
-                <FilterSizeOption>S</FilterSizeOption>
-                <FilterSizeOption>M</FilterSizeOption>
-                <FilterSizeOption>L</FilterSizeOption>
-                <FilterSizeOption>XL</FilterSizeOption>
+              <FilterSize onChange={(e)=>setSize(e.target.value)}>
+              {data.size?.map(item => (
+                <FilterSizeOption key={item}>{item}</FilterSizeOption>
+              ))}
               </FilterSize>
             </Filter>
 
@@ -140,11 +176,11 @@ const Product = () => {
 
           <AddContainer>
             <AmountContainer>
-              <Remove />
-              <Amount>1</Amount>
-              <Add />
+              <Remove onClick={()=>handleQunatity('dec')}/>
+              <Amount>{quantity}</Amount>
+              <Add onClick={()=>handleQunatity('asc')}/>
             </AmountContainer>
-            <Button>ADD TO CART</Button>
+            <Button onClick={handleCartSubmit}>ADD TO CART</Button>
           </AddContainer>
         </InfoContainer>
       </Wrapper>
