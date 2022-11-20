@@ -1,7 +1,16 @@
 import axios from "axios";
 
 const BASE_URL = "http://localhost:5000/api/"
-const TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzNzRmZTI1YTcxYjc3YzAxN2U2MzM2MSIsImlzQWRtaW4iOnRydWUsImlhdCI6MTY2ODYzNjI5MCwiZXhwIjoxNjY4ODk1NDkwfQ.taenZ7HnQiKaCrUr9PC6Dg5wWY0U0HSGdvtnPf7PbYA";
+
+const user = JSON.parse(localStorage.getItem("persist:root")).currentUser
+
+
+const accessToken = JSON.parse(user).accessToken
+const isAdmin = JSON.parse(user).isAdmin
+
+console.log(isAdmin)
+
+const TOKEN = accessToken
 
 export const publicRequest = axios.create({
     baseURL: BASE_URL

@@ -7,9 +7,10 @@ import ProductList from './pages/ProductList'
 import Cart from "./pages/Cart";
 import { QueryClientProvider ,QueryClient} from "react-query";
 import { ReactQueryDevtools } from 'react-query/devtools'
+import { useSelector } from "react-redux";
 
 function App() {
-  const user = true
+  const user = useSelector(state=>state.user.currentUser)
   const client = new QueryClient()
   return (
     <QueryClientProvider client={client}>

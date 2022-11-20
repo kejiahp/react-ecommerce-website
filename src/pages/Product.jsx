@@ -10,6 +10,8 @@ import { useLocation } from 'react-router-dom'
 import { useQuery } from 'react-query'
 import { getSingleProduct } from '../ApiCalls'
 import { useState } from 'react'
+import { useDispatch } from 'react-redux'
+import { addProduct } from '../redux/cartReducer'
 
 const Container = styled.div``
 
@@ -111,6 +113,7 @@ const Product = () => {
   const [quantity, setQuantity] = useState(1)
   const [color, setColor] = useState("")
   const [size, setSize] = useState("")
+  const dispatch = useDispatch()
 
   const handleQunatity = (type) => {
     if(type === 'dec') {
@@ -123,6 +126,7 @@ const Product = () => {
 
   const handleCartSubmit = () => {
     //update cart
+    dispatch(addProduct({...data, quantity, color, size}))
   }
 
   const {data, isFetching, isLoading, isError, error} = useQuery("single-product", ()=>getSingleProduct(id), {
@@ -132,7 +136,7 @@ const Product = () => {
     }
   })
 
-  if(isLoading, isFetching) {
+  if(isLoading || isFetching) {
     return <h2>Loading...</h2>
   }
   if(isError) {
